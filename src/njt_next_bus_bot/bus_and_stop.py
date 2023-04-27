@@ -18,8 +18,6 @@ class Stop(Enum):
     PABT = "PABT", "NJ", 21830  ## port authority bus terminal toward new jersey
 
 
-
-
 class NextBus:
     def __init__(self, stop: Stop, predicted_time: str, predicted_unit: str, bus_number: str, bus_timestamp: str):
         """
@@ -53,7 +51,8 @@ class NextBus:
     def __str__(self) -> str:
         return f"pt: {self.predicted_time}, pu: {self.predicted_unit}, bustime: {self.bus_timestamp}"
 
-def format_bus_message(bus_list: List[NextBus], stop:Stop, direction:str) -> str:
+
+def format_bus_message(bus_list: List[NextBus], stop: Stop, direction: str) -> str:
     message = (f"To <b>{direction}</b> Stop # {stop}:\n") + (
         "\n".join([bus.to_html() for bus in bus_list]) if bus_list else "No bus found"
     )

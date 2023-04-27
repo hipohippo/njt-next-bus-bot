@@ -57,13 +57,14 @@ async def next_bus_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = format_bus_message(next_bus_list, stop, direction)
     await update.message.reply_text(text=message, parse_mode="HTML")
 
+
 async def next_bus_lhny_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     next_bus_list = await next_bus_job(Stop.LHNY)
     message = format_bus_message(next_bus_list, Stop.LHNY, "NY")
     await update.message.reply_text(text=message, parse_mode="HTML")
 
+
 async def next_bus_pabt_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     next_bus_list = await next_bus_job(Stop.PABT)
     message = format_bus_message(next_bus_list, Stop.LHNY, "NJ")
     await update.message.reply_text(text=message, parse_mode="HTML")
-
