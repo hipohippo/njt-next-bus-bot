@@ -1,7 +1,8 @@
 from configparser import SectionProxy
 from typing import Union
 
-from hipo_telegram_bot_common.bot_config import BotConfig
+from hipo_telegram_bot_common.bot_config.bot_config import BotConfig
+from hipo_telegram_bot_common.util import format_white_list
 
 
 class NJTNextBusBotConfig(BotConfig):
@@ -9,5 +10,6 @@ class NJTNextBusBotConfig(BotConfig):
         super().__init__(
             int(bot_config_dict["heart_beat_chat"]),
             int(bot_config_dict["error_notify_chat"]),
+            white_list_id=format_white_list(bot_config_dict["white_list"]),
             bot_name="NJT Next Bus Bot",
         )
