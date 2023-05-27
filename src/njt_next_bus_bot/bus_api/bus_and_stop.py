@@ -36,17 +36,17 @@ class NextBus:
         self.bus_number = bus_number
         self.bus_timestamp = bus_timestamp
         if self.predicted_time != "":
-            self.arrival_time = pd.Timestamp.now() + pd.Timedelta(f"{self.predicted_time} {self.predicted_unit}")
+            self.departure_time = pd.Timestamp.now() + pd.Timedelta(f"{self.predicted_time} {self.predicted_unit}")
         elif self.predicted_unit.lower().strip() == "approaching":
-            self.arrival_time = pd.Timestamp.now()
+            self.departure_time = pd.Timestamp.now()
         else:
-            self.arrival_time = pd.Timestamp(bus_timestamp)
+            self.departure_time = pd.Timestamp(bus_timestamp)
 
         if stop == Stop.PABT:
-            self.arrival_time -= pd.Timedelta("16 min")
+            self.departure_time -= pd.Timedelta("16 min")
 
     def to_html(self) -> str:
-        return f"{self.bus_number}: <b>{self.predicted_time} {self.predicted_unit}</b> @ <b>{self.arrival_time.strftime('%I:%M %p')}</b>"
+        return f"{self.bus_number}: <b>{self.predicted_time} {self.predicted_unit}</b> @ <b>{self.departure_time.strftime('%I:%M %p')}</b>"
 
     def __str__(self) -> str:
         return f"pt: {self.predicted_time}, pu: {self.predicted_unit}, bustime: {self.bus_timestamp}"
@@ -54,6 +54,6 @@ class NextBus:
 
 def format_bus_message(bus_list: List[NextBus], stop: Stop, direction: str) -> str:
     message = (f"To <b>{direction}</b> Stop # {stop}:\n") + (
-        "\n".join([bus.to_html() for bus in bus_list]) if bus_list else "No bus found"
+        "\n".join([bus.to_html() for bus in bus_list if bus.departure_time >= pd.Timestamp.now()]) if bus_list else "No bus found"
     )
     return message
