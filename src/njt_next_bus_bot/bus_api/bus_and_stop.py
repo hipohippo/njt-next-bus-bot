@@ -42,8 +42,10 @@ class NextBus:
         else:
             self.departure_time = pd.Timestamp(bus_timestamp)
 
+        # the api only returns bus arrival info for NJLH, we need to adjust for PABT
         if stop == Stop.PABT:
             self.departure_time -= pd.Timedelta("16 min")
+            self.predicted_time -= pd.Timedelta("16 min")
 
     def to_html(self) -> str:
         return f"{self.bus_number}: <b>{self.predicted_time} {self.predicted_unit}</b> @ <b>{self.departure_time.strftime('%I:%M %p')}</b>"
