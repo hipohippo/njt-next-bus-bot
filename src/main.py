@@ -6,7 +6,7 @@ from telegram.ext import CommandHandler, Application
 from hipo_telegram_bot_common.bot_config.bot_config_parser import parse_from_ini
 from hipo_telegram_bot_common.bot_factory import BotBuilder
 from hipo_telegram_bot_common.common_handler import heart_beat_job
-from njt_next_bus_bot.bot_handler import next_bus_handler, next_bus_pabt_handler, next_bus_lhny_handler, start_job
+from njt_next_bus_bot.bot_handler import next_bus_handler, next_bus_pabt_handler, next_bus_lhny_handler, init_cmd
 from njt_next_bus_bot.njt_next_bus_bot_config import NJTNextBusBotConfig
 
 
@@ -21,7 +21,7 @@ def build_bot_app(bot_config_dict) -> Application:
                 CommandHandler("ny", next_bus_lhny_handler),
             ]
         )
-        .add_onetime_jobs([(start_job, {"when": 2})])
+        .add_onetime_jobs([(init_cmd, {"when": 2})])
         .add_repeating_jobs([(heart_beat_job, {"first": 5, "interval": 3 * 3600})])
         .build()
     )

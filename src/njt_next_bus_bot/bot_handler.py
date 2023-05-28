@@ -6,7 +6,7 @@ from njt_next_bus_bot.bus_api.bus_and_stop import Stop, format_bus_message
 from njt_next_bus_bot.bus_api.bus_api import next_bus_job
 
 
-async def start_job(context: ContextTypes.DEFAULT_TYPE):
+async def init_cmd(context: ContextTypes.DEFAULT_TYPE):
     await context.bot.setMyCommands([BotCommand("/ny", "NYC Next Bus"), BotCommand("/nj", "NJ Next Bus")])
 
 
