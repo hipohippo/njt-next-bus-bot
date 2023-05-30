@@ -21,15 +21,14 @@ class Stop(Enum):
 class NextBus:
     def __init__(self, stop: Stop, predicted_time: str, predicted_unit: str, bus_number: str, bus_timestamp: str):
         """
-        pd.Timedelta("7 minutes").components.minutes
-        self.bus_timestamp = pd.to_datetime('today').normalize() + pd.Timestamp(bus_timestamp)
-        * when bus approaching, "pt" is not an integer. {"pt": 7, "pu": minutes"} or {"pt": "&nbsp;", "pu":"APPROACHING"}
-        * now() + "pt" may not equal to bus_timestamp, should use the later one
+        * {"pt": 7, "pu": minutes"}
+        * {"pt": "&nbsp;", "pu":"APPROACHING"}
+        * now() + "pt" may not equal to bus_timestamp, should use the latter one if possible
         :param stop:
-        :param predicted_time:
-        :param predicted_unit:
-        :param bus_number:
-        :param bus_timestamp:
+        :param predicted_time:  <pt>
+        :param predicted_unit:  <pu>
+        :param bus_number:      <rn>
+        :param bus_timestamp:   <nextbusonroutetime>
         """
         self.predicted_time = "" if not predicted_time.isnumeric() else predicted_time
         self.predicted_unit = predicted_unit.lower().strip()
@@ -45,7 +44,7 @@ class NextBus:
         # the api only returns bus arrival info for NJLH, we need to adjust for PABT
         if stop == Stop.PABT:
             self.departure_time -= pd.Timedelta("16 min")
-            self.predicted_time -= pd.Timedelta("16 min")
+            self.predicted_time -= 16
 
     def to_html(self) -> str:
         return f"{self.bus_number}: <b>{self.predicted_time} {self.predicted_unit}</b> @ <b>{self.departure_time.strftime('%I:%M %p')}</b>"
