@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import List
 
+import numpy as np
 import pandas as pd
 
 
@@ -30,11 +31,11 @@ class NextBus:
         :param bus_number:      <rn>
         :param bus_timestamp:   <nextbusonroutetime>
         """
-        self.predicted_time = "" if not predicted_time.isnumeric() else predicted_time
+        self.predicted_time = np.nan if not predicted_time.isnumeric() else int(predicted_time)
         self.predicted_unit = predicted_unit.lower().strip()
         self.bus_number = bus_number
         self.bus_timestamp = bus_timestamp
-        if self.predicted_time != "":
+        if not np.isnan(self.predicted_time):
             self.departure_time = pd.Timestamp.now() + pd.Timedelta(f"{self.predicted_time} {self.predicted_unit}")
         elif self.predicted_unit.lower().strip() == "approaching":
             self.departure_time = pd.Timestamp.now()

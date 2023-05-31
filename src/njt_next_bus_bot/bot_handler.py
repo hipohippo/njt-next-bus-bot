@@ -33,5 +33,5 @@ async def next_bus_lhny_handler(update: Update, context: ContextTypes.DEFAULT_TY
 
 async def next_bus_pabt_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     next_bus_list = await next_bus_job(Stop.PABT)
-    message = format_bus_message(next_bus_list, Stop.LHNY, "NJ")
+    message = format_bus_message(next_bus_list, Stop.PABT, "NJ")
     await update.message.reply_text(text=message, parse_mode="HTML")
