@@ -6,7 +6,9 @@ from telegram.ext import CommandHandler, Application
 from hipo_telegram_bot_common.bot_config.bot_config_parser import parse_from_ini
 from hipo_telegram_bot_common.bot_factory import BotBuilder
 from hipo_telegram_bot_common.common_handler import heart_beat_job
-from njt_next_bus_bot.bot_handler import next_bus_handler, next_bus_pabt_handler, next_bus_lhny_handler, init_cmd
+from njt_next_bus_bot.bot_handler import next_bus_handler, next_bus_pabt_handler, next_bus_lhny_handler, init_cmd, \
+    lightrail_alert_handler, path_handler
+from njt_next_bus_bot.bus_api.path_train_status import PathStation
 from njt_next_bus_bot.njt_next_bus_bot_config import NJTNextBusBotConfig
 
 
@@ -19,6 +21,8 @@ def build_bot_app(bot_config_dict) -> Application:
                 CommandHandler("next", next_bus_handler),
                 CommandHandler("nj", next_bus_pabt_handler),
                 CommandHandler("ny", next_bus_lhny_handler),
+                CommandHandler("lr", lightrail_alert_handler),
+                CommandHandler(set(PathStation.get_station_map().keys()), path_handler)
             ]
         )
         .add_onetime_jobs([(init_cmd, {"when": 2})])

@@ -1,42 +1,32 @@
-import logging
+"""
+projecte parked due to anti-robot mechanism on njtransit.com
+"""
 from typing import List
-from xml.etree import ElementTree as ET
 
-import httpx
+from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 
+from hipo_telegram_bot_common.selenium_driver.launch import get_chrome_driver
 from njt_next_bus_bot.bus_api.bus_and_stop import Stop, NextBus
 
 
-def parse_bus_xml(stop: Stop, xml_content: bytes) -> List[NextBus]:
-    tree = ET.fromstring(xml_content)
-    bus_info = []
-    for i, node in enumerate(tree):
-        try:
-            if node.tag == "pre":
-                next_bus = NextBus(
-                    stop,
-                    node.find("pt").text,
-                    node.find("pu").text,
-                    node.find("rn").text,
-                    node.find("nextbusonroutetime").text,
-                )
-                bus_info.append(next_bus)
-                logging.info(f"{stop}: processed node {i}")
-            else:
-                logging.info(f"{stop}: no bus found")
-        except Exception as e:
-            if node.find("nextbusonroutetime"):
-                logging.error(f"{stop}: unable to process node {i} {e}, node: {node.find('nextbusonroutetime').text}")
-            else:
-                logging.error(f"{stop}: unable to process node {i} {e}")
-    return bus_info
+def parse_mybusnow_webpage(stop: Stop, browser: WebDriver, browser_window_handle: int) -> List[NextBus]:
+    browser.switch_to.window(browser.window_handles[browser_window_handle])
+    browser.get(f"https://mybusnow.njtransit.com/bustime/wireless/html/eta.jsp?route=All&id={stop.id}&showAllBusses=on")
+    scheduled_bus_and_arrivals = browser.find_elements(by=By.XPATH, value='//strong[@class="larger"]')
+    capacity = browser.find_elements(by=By.XPATH, value='//span[@class="smaller"]')
+    bus_and_prediction = [element.text for element in scheduled_bus_and_arrivals]
+    vehicle_info = [cap.text for cap in capacity]
+
+    num_arrival_info = len(bus_and_prediction) // 2
+    return [
+        NextBus(stop, bus_and_prediction[2 * i], bus_and_prediction[2 * i + 1], vehicle_info[i])
+        for i in range(num_arrival_info)
+    ]
 
 
-async def next_bus_job(stop: Stop) -> List[NextBus]:
-    bus_info_response = await httpx.AsyncClient().get(
-        f"https://mybusnow.njtransit.com/bustime/eta/getStopPredictionsETA.jsp?route=all&stop={stop.id}"
-    )
-    if bus_info_response.status_code != 200:
-        logging.error(f"error requesting bus info {bus_info_response.status_code}")
-        return []
-    return parse_bus_xml(stop, bus_info_response.content)
+async def next_bus_job(stop: Stop, browser: WebDriver, browser_window_handle: int) -> List[NextBus]:
+    return parse_mybusnow_webpage(stop, browser, browser_window_handle)
+
+def local_tst():
+    browser = get_chrome_driver(config, 6001)

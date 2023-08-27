@@ -1,5 +1,7 @@
 .idea
 local_test.py
+tst_main.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
