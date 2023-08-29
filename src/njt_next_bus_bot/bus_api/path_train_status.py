@@ -50,6 +50,7 @@ class PathLine(Enum):
             "Newark": PathLine.WTC,
             "33rd Street": PathLine.ST33,
             "Journal Square": PathLine.ST33,
+            "Hoboken":PathLine.HOBOKEN
         }[api_name]
 
 
