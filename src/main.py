@@ -26,7 +26,6 @@ def build_bot_app(bot_config_dict) -> Application:
             ]
         )
         .add_onetime_jobs([(init_cmd, {"when": 2})])
-        .add_repeating_jobs([(heart_beat_job, {"first": 5, "interval": 3 * 3600})])
         .build()
     )
     return bot_app
